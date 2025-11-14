@@ -12,6 +12,7 @@ likes:{type:[
 comments:{type:[
     {type:Schema.Types.ObjectId,ref:'comment'}
 ],default:[]},
+views:{type:Number,default:0},
 mainslider:{type:Boolean,default:false},
 imageid:{type:String,default:''}
 
