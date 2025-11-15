@@ -2,7 +2,7 @@ import { Request,Response,NextFunction } from "express";
 import { PostSchema } from "../schema/post";
 import validator from 'validator'
 import type { post } from "../types";
-
+import { v2 as cloudinary } from 'cloudinary'
 
 
 export const createpost=async(req:Request,res:Response,next:NextFunction)=>{
@@ -88,4 +88,22 @@ export const searchpostsadmin=async(req:Request,res:Response,next:NextFunction)=
         }
                                     
           
+}
+
+
+export const deletepost=async(req:Request,res:Response,next:NextFunction)=>{
+                if(!req.body){
+        return res.status(406).json({message:'body missed'})
+                          }
+           const id=req.body.id as string
+          try{
+            const curpost=await PostSchema.findOne({id})
+             
+            await PostSchema.deleteOne({_id:id})
+            await cloudinary.uploader.destroy(curpost?.imageid as string)
+             return res.status(200).json({message:'post has been deleted successfully'})
+          }catch(err){
+           return res.status(406).json({message:'somthing went wrong'})
+          }                                                
+         
 }
