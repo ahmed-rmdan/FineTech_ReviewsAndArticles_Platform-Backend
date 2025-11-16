@@ -5,5 +5,6 @@ export type post={
     description:string,
     mainimage:string,
     content:string,
-    mainslider:boolean    
+    mainslider:boolean,
+    id:string    
 }

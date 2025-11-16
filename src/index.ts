@@ -25,7 +25,7 @@ const app=Express()
 app.use(helmet())
 app.use(cors())
 
-const upload=multer({storage,limits:{fieldSize:10 * 1024 * 1024 }})
+export const upload=multer({storage,limits:{fieldSize:10 * 1024 * 1024 }})
 app.use(Express.json({limit:'10mb'}))
 app.use(Express.urlencoded({extended:true}))
 
@@ -45,6 +45,37 @@ const id=req.query.id as string
   if(!allowedTypes.includes(req.file.mimetype)){
     return res.status(406).json({message:'file must be image go to posts control to edit the image'})
   }
+   const result = await cloudinary.uploader.upload_stream(
+      { folder: "FineTech" },
+      async (error, result) => {
+        if (error) return res.status(406).send({ message: 'upload failed', error });
+           
+        await PostSchema.updateOne({_id:id},{$set:{mainimage:result?.secure_url,imageid:result?.public_id}})
+
+        res.status(200).send({ message: 'mainimage has been added' });
+      }
+    );
+
+   
+    result.end(req.file.buffer);
+
+
+})
+
+
+app.put('/posts/editpostimage',upload.single('file'),async(req:Request,res:Response,next:NextFunction)=>{
+
+const id=req.query.id as string
+ if(!id){
+  res.status(401).send({message:'productid not found'})
+ }
+ if (!req.file) return res.status(400).send({ message: 'file not found' });
+  const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+  if(!allowedTypes.includes(req.file.mimetype)){
+    return res.status(406).json({message:'file must be image go to posts control to edit the image'})
+  }
+      const findpost=await PostSchema.findOne({_id:id})
+          await cloudinary.uploader.destroy(findpost?.imageid as string)        
    const result = await cloudinary.uploader.upload_stream(
       { folder: "FineTech" },
       async (error, result) => {
