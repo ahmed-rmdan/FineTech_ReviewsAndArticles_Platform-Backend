@@ -145,32 +145,45 @@ export const editpost=async(req:Request,res:Response,next:NextFunction)=>{
 }
 
 
-// export const editpostimage =async(req:Request,res:Response,next:NextFunction)=>{
+export const getsliderposts=async(req:Request,res:Response,next:NextFunction)=>{
+              
+          try{
+            const posts=await PostSchema.find({mainslider:true}) 
+                          
+             return res.status(200).json({posts})
 
-// const id=req.query.id as string
-//  if(!id){
-//   res.status(401).send({message:'productid not found'})
-//  }
-//  if (!req.file) return res.status(400).send({ message: 'file not found' });
-//   const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
-//   if(!allowedTypes.includes(req.file.mimetype)){
-//     return res.status(406).json({message:'file must be image go to posts control to edit the image'})
-//   }
-//       const findpost=await PostSchema.findOne({_id:id})
-//           await cloudinary.uploader.destroy(findpost?.imageid as string)        
-//    const result = await cloudinary.uploader.upload_stream(
-//       { folder: "FineTech" },
-//       async (error, result) => {
-//         if (error) return res.status(406).send({ message: 'upload failed', error });
-           
-//         await PostSchema.updateOne({_id:id},{$set:{mainimage:result?.secure_url,imageid:result?.public_id}})
+          }catch(err){                                    
+           return res.status(406).json({message:'somthing went wrong'})
+                   }                                                
+         
+}
 
-//         res.status(200).send({ message: 'mainimage has been added' });
-//       }
-//     );
+export const gettopreadingposts=async(req:Request,res:Response,next:NextFunction)=>{
+              
+          try{
+            const posts=await PostSchema.find().sort({views:-1}).limit(3) 
+                          
+             return res.status(200).json({posts})
 
-   
-//     result.end(req.file.buffer);
+          }catch(err){                                    
+           return res.status(406).json({message:'somthing went wrong'})
+                   }                                                
+         
+}
 
 
-// }
+export const viewpost=async(req:Request,res:Response,next:NextFunction)=>{
+      
+           const id=req.query.id as string
+           console.log(id)
+          try{
+ 
+            const curpost=await PostSchema.findOne({_id:id}) 
+              await PostSchema.updateOne({_id:id},{views:curpost!.views+1})               
+             return res.status(200).json({post:curpost})
+
+          }catch(err){                                    
+           return res.status(406).json({message:'somthing went wrong'})
+                   }                                                
+         
+}

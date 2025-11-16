@@ -5,8 +5,9 @@ import { searchpostsadmin } from "../controler/controler"
 import { deletepost } from "../controler/controler"
 import { getpost } from "../controler/controler"
 import { editpost } from "../controler/controler"
-// import { editpostimage } from "../controler/controler"
-// import { upload } from ".."
+import { getsliderposts } from "../controler/controler"
+import  {gettopreadingposts} from "../controler/controler"
+import { viewpost } from "../controler/controler"
 
 const router=express.Router()
 
@@ -16,6 +17,8 @@ router.get('/searchadminposts',searchpostsadmin)
 router.delete('/deletepost',deletepost)
 router.get('/getpost',getpost)
 router.post('/editpost',editpost)
-// router.put('/editpostimage',upload.single('file'),editpostimage)
+router.get('/getsliderposts',getsliderposts)
+router.get('/gettopreadingposts',gettopreadingposts)
+router.get('/viewpost',viewpost)
 
 export const PostsRoute=router
