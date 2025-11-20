@@ -1,13 +1,13 @@
 import express from "express"
-import { createpost } from "../controler/controler"
-import  {getposts} from "../controler/controler"
-import { searchpostsadmin } from "../controler/controler"
-import { deletepost } from "../controler/controler"
-import { getpost } from "../controler/controler"
-import { editpost } from "../controler/controler"
-import { getsliderposts } from "../controler/controler"
-import  {gettopreadingposts} from "../controler/controler"
-import { viewpost } from "../controler/controler"
+import { createpost } from "../controler/posts"
+import  {getposts} from "../controler/posts"
+import { searchpostsadmin } from "../controler/posts"
+import { deletepost } from "../controler/posts"
+import { getpost } from "../controler/posts"
+import { editpost } from "../controler/posts"
+import { getsliderposts } from "../controler/posts"
+import  {gettopreadingposts} from "../controler/posts"
+import { viewpost } from "../controler/posts"
 
 const router=express.Router()
 

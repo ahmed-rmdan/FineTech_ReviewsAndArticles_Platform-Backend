@@ -6,8 +6,10 @@ import dotenv from 'dotenv'
 import { v2 as cloudinary } from 'cloudinary'
 import multer from 'multer'
 import { PostsRoute } from './routes/posts';
-import { putpostimage } from './controler/controler';
-import { editpostimage } from './controler/controler';
+import { putpostimage } from './controler/posts';
+import { editpostimage } from './controler/posts';
+import { ReviewsRoutes } from './routes/reviews';
+import { putreviewtimage } from './controler/reviews';
 
 dotenv.config()
 cloudinary.config({
@@ -40,6 +42,9 @@ app.put('/posts/putpostimage',upload.single('file'),putpostimage)
 app.put('/posts/editpostimage',upload.single('file'),editpostimage)
 
 
+app.use('/reviews',ReviewsRoutes)
+
+app.put('/reviews/putreviewimage',upload.single('file'),putreviewtimage)
 
 
 mongoose.connect(process.env.MONGO_URI as string).then(server=>{
