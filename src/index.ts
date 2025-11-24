@@ -10,7 +10,7 @@ import { putpostimage } from './controler/posts';
 import { editpostimage } from './controler/posts';
 import { ReviewsRoutes } from './routes/reviews';
 import { putreviewtimage } from './controler/reviews';
-
+import { editreviewimage } from './controler/reviews';
 dotenv.config()
 cloudinary.config({
   cloud_name:'df0no7xar',
@@ -45,7 +45,7 @@ app.put('/posts/editpostimage',upload.single('file'),editpostimage)
 app.use('/reviews',ReviewsRoutes)
 
 app.put('/reviews/putreviewimage',upload.single('file'),putreviewtimage)
-
+app.put('/reviews/editreviewimage',upload.single('file'),editreviewimage)
 
 mongoose.connect(process.env.MONGO_URI as string).then(server=>{
 app.listen(process.env.PORT || '5000')

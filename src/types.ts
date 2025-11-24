@@ -1,5 +1,6 @@
 
 
+
 export type post={
     title:string,
     description:string,
@@ -11,10 +12,11 @@ export type post={
 
 export type review={
     title:string,
+    category:string
     description:string,
     mainimage:string,
     content:string,
     id:string,
     summary:string,
-    score:string 
+    score:Number 
 }

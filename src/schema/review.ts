@@ -3,6 +3,7 @@ import {Schema} from "mongoose";
 
 const schema=new Schema({
 title:{type:String},
+category:{type:String,require:true,default:'allreviews'},
 description:String,
 mainimage:{type:String,default:''},
 content:String,
@@ -15,10 +16,12 @@ comments:{type:[
 views:{type:Number,default:0},
 imageid:{type:String,default:''},
 summary:{type:String,default:''},
-score:{type:String,require:true},
+score:{type:Number,require:true},
+
+
 usersscore:{
     type:[
-        {id:{type:Schema.Types.ObjectId,ref:'user'},score:{type:Number,require:true}}
+        {id:{type:Schema.Types.ObjectId,ref:'user'},score:{type:String,require:true}}
     ]
 }
 
