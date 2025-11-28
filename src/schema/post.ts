@@ -14,7 +14,8 @@ comments:{type:[
 ],default:[]},
 views:{type:Number,default:0},
 mainslider:{type:Boolean,default:false},
-imageid:{type:String,default:''}
+imageid:{type:String,default:''},
+type:{type:String,default:'post'}
 
 
 },{timestamps:true})

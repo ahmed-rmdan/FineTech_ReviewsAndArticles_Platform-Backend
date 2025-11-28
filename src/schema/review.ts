@@ -23,7 +23,8 @@ usersscore:{
     type:[
         {id:{type:Schema.Types.ObjectId,ref:'user'},score:{type:String,require:true}}
     ]
-}
+},
+type:{type:String,default:'review'}
 
 
 },{timestamps:true})

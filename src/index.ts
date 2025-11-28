@@ -11,6 +11,7 @@ import { editpostimage } from './controler/posts';
 import { ReviewsRoutes } from './routes/reviews';
 import { putreviewtimage } from './controler/reviews';
 import { editreviewimage } from './controler/reviews';
+import { UserRoutes } from './routes/user';
 dotenv.config()
 cloudinary.config({
   cloud_name:'df0no7xar',
@@ -35,17 +36,19 @@ app.use(Express.urlencoded({extended:true}))
 
 
 app.use('/posts',PostsRoute)
-
 app.put('/posts/putpostimage',upload.single('file'),putpostimage)
-
-
 app.put('/posts/editpostimage',upload.single('file'),editpostimage)
 
 
 app.use('/reviews',ReviewsRoutes)
-
 app.put('/reviews/putreviewimage',upload.single('file'),putreviewtimage)
 app.put('/reviews/editreviewimage',upload.single('file'),editreviewimage)
+
+
+app.use('/users',UserRoutes)
+
+
+
 
 mongoose.connect(process.env.MONGO_URI as string).then(server=>{
 app.listen(process.env.PORT || '5000')

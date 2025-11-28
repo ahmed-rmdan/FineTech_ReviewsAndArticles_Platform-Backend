@@ -20,3 +20,10 @@ export type review={
     summary:string,
     score:Number 
 }
+
+export type user={
+    name:string,
+    username:string,
+    password:string,
+    email:string
+}
