@@ -32,6 +32,7 @@ export const getposts=async(req:Request,res:Response,next:NextFunction)=>{
 
     const page=Number(req.query.page)
     const sort=req.query.sort as string
+      console.log(sort)
            const start=(page-1)*6
         try{
           const noposts=(await PostSchema.find()).length
@@ -40,11 +41,11 @@ export const getposts=async(req:Request,res:Response,next:NextFunction)=>{
                 const posts=await PostSchema.find().sort({createdAt:1}).skip(start).limit(6)
             return res.status(200).json({posts,noposts})
               }
-          if(sort=='most liked'){
-                const posts=await PostSchema.find().sort({likes:1}).skip(start).limit(6)
+          if(sort=='Most liked'){
+                const posts=await PostSchema.find().sort({likes:-1}).skip(start).limit(6)
             return res.status(200).json({posts,noposts})
-          }if(sort=='most viewed') {
-                const posts=await PostSchema.find().sort({views:1}).skip(start).limit(6)
+          }if(sort=='Most viewed') {
+                const posts=await PostSchema.find().sort({views:-1}).skip(start).limit(6)
             return res.status(200).json({posts,noposts})
             }
            else{

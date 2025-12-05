@@ -34,7 +34,7 @@ export const createuser=async(req:Request,res:Response,next:NextFunction)=>{
                   }
                   const bcryptpass=await bcrypt.hash(body.password,10)
    await new UserSchema({
-    name:body.email,
+    name:body.name,
     username:body.username,
     password:bcryptpass,
     email:body.email
