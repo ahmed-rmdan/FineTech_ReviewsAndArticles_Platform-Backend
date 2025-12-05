@@ -194,7 +194,7 @@ export const putpostimage=async (req:Request,res:Response,next:NextFunction)=>{
 
 const id=req.query.id as string
  if(!id){
-  res.status(401).send({message:'productid not found'})
+  return res.status(401).send({message:'productid not found'})
  }
  if (!req.file) return res.status(400).send({ message: 'file not found' });
   const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];

@@ -12,6 +12,7 @@ import { ReviewsRoutes } from './routes/reviews';
 import { putreviewtimage } from './controler/reviews';
 import { editreviewimage } from './controler/reviews';
 import { UserRoutes } from './routes/user';
+import { putuserimage } from './controler/users';
 dotenv.config()
 cloudinary.config({
   cloud_name:'df0no7xar',
@@ -46,7 +47,7 @@ app.put('/reviews/editreviewimage',upload.single('file'),editreviewimage)
 
 
 app.use('/users',UserRoutes)
-
+app.put('/users/putuserimage',upload.single('file'),putuserimage)
 
 
 
