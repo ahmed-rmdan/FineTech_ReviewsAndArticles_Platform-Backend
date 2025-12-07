@@ -4,6 +4,8 @@ import { UserSchema } from "../schema/user";
 import type { user } from "../types";
 import bcrypt from 'bcrypt'
 import { v2 as cloudinary } from 'cloudinary'
+import * as brevo from "@getbrevo/brevo";
+import Crypto from 'crypto'
 export const createuser=async(req:Request,res:Response,next:NextFunction)=>{
     try{
     const body:user=req.body
@@ -11,7 +13,7 @@ export const createuser=async(req:Request,res:Response,next:NextFunction)=>{
         return res.status(404).json({message:'body is missing'})
     }
 
-   if(!validator.isLength(body.name,{min:5,max:20})){
+   if(!validator.isLength(body.name,{min:3,max:15})){
          return res.status(404).json({message:'name should not be less than 5 and more than 20'})
    }
       if(!validator.isLength(body.username,{min:5,max:20})){
@@ -94,3 +96,130 @@ export const putuserimage = async (req:Request,res:Response,next:NextFunction)=>
 
 }
 
+
+
+export const updatename = async (req:Request,res:Response,next:NextFunction)=>{
+            
+          const userid=req.body.id as string
+          const newname=req.body.newname as string
+          console.log(userid)
+            if(!userid){
+              return res.status(401).send({message:' couldnt find user'})
+            }
+            if(!validator.isLength(newname,{min:3})){
+                return res.status(406).json({message:'name souldnt be less than 3 and more than 15'})
+            }
+          try{
+               await UserSchema.updateOne({_id:userid},{$set:{name:newname}})
+               return res.status(200).json({message:'name has been updated'})
+          }catch(err){
+
+            return res.status(402).json({message:'error has happened'})
+       
+        }                
+
+}
+
+
+
+export const updatepass=async (req:Request,res:Response,next:NextFunction)=>{
+            const userid=req.body.id as string
+          const pass=req.body.pass as string
+          const newpass=req.body.newpass as string
+          console.log(userid)
+            if(!userid){
+              return res.status(401).send({message:'couldnt find user'})
+            }
+               if(!validator.isLength(newpass,{min:6,max:20})){
+                return res.status(406).json({message:'name souldnt be less than 6 and more than 20'})
+            }
+             const finduser=await UserSchema.findOne({_id:userid})
+               const isequal=await bcrypt.compare(pass,finduser?.password as string)
+               if(!isequal){
+                return res.status(401).send({message:'password is not correct'})
+               }
+          try{
+              const encryptpass=await bcrypt.hash(newpass,10)
+               await UserSchema.updateOne({_id:userid},{$set:{password:encryptpass}})
+               return res.status(200).json({message:'password has been updated'})
+          }catch(err){
+
+            return res.status(402).json({message:'error has happened'})
+       
+        }                
+
+}
+
+
+
+export const resetpass=async (req:Request,res:Response,next:NextFunction)=>{
+           
+      const email=req.body.email as string
+      const isfound=await UserSchema.findOne({email:email})
+      if(!isfound){
+        return res.status(404).send({message:'email is not correct'})
+      }
+   
+          const apiInstance = new brevo.TransactionalEmailsApi();
+        apiInstance.setApiKey(brevo.TransactionalEmailsApiApiKeys.apiKey, process.env.BREVO_API_KEY as string);
+  
+         Crypto.randomBytes(32,async(err:Error|null,buf:Buffer)=>{
+if(err){
+    return  res.status(406).json('wrong email')
+}
+         const token=buf.toString('hex')
+
+const expiredreset=new Date(Date.now() + 900000)
+await UserSchema.updateOne({_id:isfound._id},{resettoken:token,resetexpire:expiredreset.toString()})
+
+
+  const sendSmtpEmail = new brevo.SendSmtpEmail();
+        sendSmtpEmail.sender = { name: "FineTech", email: "ahmedrmadan251998@gmail.com" };
+        sendSmtpEmail.to = [{ email: email}];
+        sendSmtpEmail.subject = 'reset your password';
+sendSmtpEmail.htmlContent = `<h1> resiting your password </h1> <h2> click on the link below to rest your password </h2>
+ <a href='http://localhost:3000/newpass?token=${token}&email=${email}'> click here to reset your password  </a>`;
+
+
+    try {
+      const data = await apiInstance.sendTransacEmail(sendSmtpEmail);
+      console.log(" Email sent:", data);
+      return res.status(200).json("email has been sent");
+    } catch (error) {
+      console.error(" Error sending email:", error);
+      return res.status(404).json({message:"failed to send email"});
+    }
+
+
+})
+
+}
+
+
+
+export const confirmnewpass=async (req:Request,res:Response)=>{
+    
+const email=req.body.email as string
+const token=req.body.token as string
+const newpass=req.body.newpass
+console.log(email,token)
+const finduser=await UserSchema.findOne({email:email})
+if(!finduser){
+     return res.status(403).json('wrong email')
+}
+if(finduser.resettoken !== token){
+     return res.status(406).json('wrong token')
+}
+
+
+if( new Date(Date.now()) >  new Date(finduser.resetexpire)  ){
+return res.status(406).json(' token expired')
+}
+const bcryptpass=await bcrypt.hash(newpass,10)
+
+await UserSchema.updateOne({_id:finduser.id},{password:bcryptpass,resetexpire:null,resettoken:null})
+console.log('password changed')
+res.status(200).json('password has been updated')
+
+
+}

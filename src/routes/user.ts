@@ -1,8 +1,15 @@
-import { createuser } from "../controler/users";
+import { confirmnewpass, createuser } from "../controler/users";
+import { updatename } from "../controler/users";
+import {updatepass}  from "../controler/users";
+import { resetpass } from "../controler/users";
+
 import express from 'express'
 
 const router=express.Router()
 
 router.post('/createuser',createuser)
-
+router.put('/updatename',updatename)
+router.put('/updatepass',updatepass)
+router.put('/resetpass',resetpass)
+router.put('/newpass',confirmnewpass)
 export const UserRoutes=router
