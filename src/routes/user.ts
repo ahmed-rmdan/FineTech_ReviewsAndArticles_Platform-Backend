@@ -2,7 +2,10 @@ import { confirmnewpass, createuser } from "../controler/users";
 import { updatename } from "../controler/users";
 import {updatepass}  from "../controler/users";
 import { resetpass } from "../controler/users";
-
+import { getlikes } from "../controler/users";
+import { addlike } from "../controler/users";
+import { setlikesandsaves } from "../controler/users";
+import { addsave } from "../controler/users";
 import express from 'express'
 
 const router=express.Router()
@@ -12,4 +15,8 @@ router.put('/updatename',updatename)
 router.put('/updatepass',updatepass)
 router.put('/resetpass',resetpass)
 router.put('/newpass',confirmnewpass)
+router.get('/getlikes',getlikes)
+router.post('/addlike',addlike)
+router.get('/setlikesandsaves',setlikesandsaves)
+router.post('/addsave',addsave)
 export const UserRoutes=router

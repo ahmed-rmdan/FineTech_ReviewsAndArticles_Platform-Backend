@@ -10,6 +10,10 @@ content:String,
 likes:{type:[
     {type:Schema.Types.ObjectId,ref:'user'}
 ],default:[]},
+saves:{type:[
+    {type:Schema.Types.ObjectId,ref:'user'}
+],default:[]}
+,
 comments:{type:[
     {type:Schema.Types.ObjectId,ref:'comment'}
 ],default:[]},
@@ -17,8 +21,6 @@ views:{type:Number,default:0},
 imageid:{type:String,default:''},
 summary:{type:String,default:''},
 score:{type:Number,require:true},
-
-
 usersscore:{
     type:[
         {id:{type:Schema.Types.ObjectId,ref:'user'},score:{type:String,require:true}}

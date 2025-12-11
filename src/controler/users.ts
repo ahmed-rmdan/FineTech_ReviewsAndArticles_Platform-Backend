@@ -6,6 +6,10 @@ import bcrypt from 'bcrypt'
 import { v2 as cloudinary } from 'cloudinary'
 import * as brevo from "@getbrevo/brevo";
 import Crypto from 'crypto'
+import { PostSchema } from "../schema/post";
+import { ReviewSchema } from "../schema/review";
+import { ObjectId, Types } from "mongoose";
+
 export const createuser=async(req:Request,res:Response,next:NextFunction)=>{
     try{
     const body:user=req.body
@@ -217,9 +221,205 @@ return res.status(406).json(' token expired')
 }
 const bcryptpass=await bcrypt.hash(newpass,10)
 
-await UserSchema.updateOne({_id:finduser.id},{password:bcryptpass,resetexpire:null,resettoken:null})
+await UserSchema.updateOne({_id:finduser.id},{$set:{password:bcryptpass,resetexpire:null,resettoken:null}})
 console.log('password changed')
 res.status(200).json('password has been updated')
+
+
+}
+
+export const setlikesandsaves= async (req:Request,res:Response)=>{
+    
+
+const userid=req.query.id
+
+const finduser=await UserSchema.findOne({_id:userid})
+if(!finduser){
+     return res.status(403).json('user not found')
+}
+const likes= (await finduser.populate('likes.item')).likes
+       const likesid=likes.map(elm=>{
+        return elm.item?._id
+       })
+  const saves= (await finduser.populate('likes.item')).saves
+       const savesid=saves.map(elm=>{
+        return elm.item?._id
+       })
+       console.log(savesid,likesid)
+        return res.status(200).json({likes:likesid,saves:savesid})
+
+}
+
+
+
+
+export const getlikes=async (req:Request,res:Response)=>{
+    
+
+const userid=req.query.id
+
+const finduser=await UserSchema.findOne({_id:userid})
+if(!finduser){
+     return res.status(403).json('user not found')
+}
+const likes= (await finduser.populate('likes.item')).likes
+        return res.status(200).json({likes})
+
+}
+
+
+
+export const addlike=async (req:Request,res:Response)=>{
+    
+ console.log('sadsadsad')
+  const userid=req.body.id as string
+   const itemid=req.body.itemid as string
+   const kind=req.body.kind as string
+   const finduser=await UserSchema.findOne({_id:userid})
+if(!finduser){
+     return res.status(403).json('user not found')
+  }
+   if(kind==='post'){
+  const post = await PostSchema.findOne({ _id: itemid });
+console.log( post?.likes.includes( new Types.ObjectId(userid)) )
+if (post?.likes.includes( new Types.ObjectId(userid) ) ) {
+
+      const oldlikes= finduser.likes
+          const userlikepost=oldlikes.findIndex(elm=>{
+           return elm.item?.equals(itemid)
+          })
+          console.log(userlikepost)
+           oldlikes.splice(userlikepost,1)
+         await UserSchema.updateOne({_id:userid},{$set:{likes:oldlikes}})
+           const oldusers=post.likes
+           const userpost=oldusers.findIndex(elm=>{
+             return  elm.equals(userid) 
+           })
+           oldusers.splice(userpost,1)
+           await PostSchema.updateOne({_id:itemid},{$set:{likes:oldusers}})
+
+  return res.status(200).json({ message: 'remove like' });
+}
+
+await PostSchema.updateOne(
+   { _id: itemid },
+   { $push: { likes: userid } }
+);
+ 
+  await UserSchema.updateOne({_id:userid},{$push:{likes:{item:itemid,kind:kind}}})
+  return res.status(200).json({ message: 'liked successfully' });
+}
+
+if(kind==='review'){
+const review = await ReviewSchema.findOne({ _id: itemid });
+ 
+if (review?.likes.includes( new Types.ObjectId(userid) ) ) {
+          const oldlikes= finduser.likes
+          const userlikepost=oldlikes.findIndex(elm=>{
+           return elm.item?.equals(itemid)
+          })
+        
+           oldlikes.splice(userlikepost,1)
+         await UserSchema.updateOne({_id:userid},{$set:{likes:oldlikes}})
+           const oldusers=review.likes
+           const userpost=oldusers.findIndex(elm=>{
+             return  elm.equals(userid) 
+           })
+           oldusers.splice(userpost,1)
+           await ReviewSchema.updateOne({_id:itemid},{$set:{likes:oldusers}})          
+             
+
+  return res.status(200).json({ message: 'remove like' });
+         }
+
+await ReviewSchema.updateOne(
+  { _id: itemid },
+  { $push: { likes: userid } }
+);
+ 
+  await UserSchema.updateOne({_id:userid},{$push:{likes:{item:itemid,kind:kind}}})
+  return res.status(200).json({ message: 'liked successfully' });
+}else{
+  return res.status(406).json({message:'invalid body'})
+}
+
+}
+
+
+export const addsave=async (req:Request,res:Response)=>{
+    
+ console.log('sadsadsad')
+  const userid=req.body.id as string
+   const itemid=req.body.itemid as string
+   const kind=req.body.kind as string
+   const finduser=await UserSchema.findOne({_id:userid})
+if(!finduser){
+     return res.status(403).json('user not found')
+  }
+   if(kind==='post'){
+  const post = await PostSchema.findOne({ _id: itemid });
+
+if (post?.saves.includes( new Types.ObjectId(userid) ) ) {
+
+      const oldsaves= finduser.saves
+          const usersavepost=oldsaves.findIndex(elm=>{
+           return elm.item?.equals(itemid)
+          })
+        
+           oldsaves.splice(usersavepost,1)
+         await UserSchema.updateOne({_id:userid},{$set:{saves:oldsaves}})
+           const oldusers=post.saves
+           const userpost=oldusers.findIndex(elm=>{
+             return  elm.equals(userid) 
+           })
+           oldusers.splice(userpost,1)
+           await PostSchema.updateOne({_id:itemid},{$set:{saves:oldusers}})
+
+  return res.status(200).json({ message: 'remove like' });
+}
+
+await PostSchema.updateOne(
+   { _id: itemid },
+   { $push: { saves: userid } }
+);
+ 
+  await UserSchema.updateOne({_id:userid},{$push:{saves:{item:itemid,kind:kind}}})
+  return res.status(200).json({ message: 'post saved successfully' });
+}
+
+if(kind==='review'){
+const review = await ReviewSchema.findOne({ _id: itemid });
+ 
+if (review?.saves.includes( new Types.ObjectId(userid) ) ) {
+          const oldsaves= finduser.saves
+          const usersavepost=oldsaves.findIndex(elm=>{
+           return elm.item?.equals(itemid)
+          })
+        
+           oldsaves.splice(usersavepost,1)
+         await UserSchema.updateOne({_id:userid},{$set:{saves:oldsaves}})
+           const oldusers=review.saves
+           const userpost=oldusers.findIndex(elm=>{
+             return  elm.equals(userid) 
+           })
+           oldusers.splice(userpost,1)
+           await ReviewSchema.updateOne({_id:itemid},{$set:{saves:oldusers}})          
+             
+
+  return res.status(200).json({ message: 'remove save' });
+         }
+
+await ReviewSchema.updateOne(
+  { _id: itemid },
+  { $push: { saves: userid } }
+);
+ 
+  await UserSchema.updateOne({_id:userid},{$push:{saves:{item:itemid,kind:kind}}})
+  return res.status(200).json({ message: 'saved successfully' });
+}else{
+  return res.status(406).json({message:'invalid body'})
+}
+
 
 
 }

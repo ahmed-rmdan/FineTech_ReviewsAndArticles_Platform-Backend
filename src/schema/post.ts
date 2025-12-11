@@ -9,6 +9,10 @@ content:String,
 likes:{type:[
     {type:Schema.Types.ObjectId,ref:'user'}
 ],default:[]},
+saves:{type:[
+    {type:Schema.Types.ObjectId,ref:'user'}
+],default:[]}
+,
 comments:{type:[
     {type:Schema.Types.ObjectId,ref:'comment'}
 ],default:[]},

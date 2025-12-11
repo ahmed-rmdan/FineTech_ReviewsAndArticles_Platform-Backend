@@ -19,7 +19,7 @@ const user=new Schema({
     ],
    saves: [
             {
-    item: { type: Schema.Types.ObjectId, refPath: "likes.kind" },
+    item: { type: Schema.Types.ObjectId, refPath: "saves.kind" },
     kind: { type: String, enum: ["post", "review"] }
              }
     ],
