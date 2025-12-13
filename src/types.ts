@@ -7,7 +7,8 @@ export type post={
     mainimage:string,
     content:string,
     mainslider:boolean,
-    id:string    
+    id:string ,
+    createdAt:Date   
 }
 
 export type review={
@@ -18,7 +19,8 @@ export type review={
     content:string,
     id:string,
     summary:string,
-    score:Number 
+    score:Number ,
+       createdAt:Date  
 }
 
 export type user={
@@ -27,3 +29,7 @@ export type user={
     password:string,
     email:string
 }
+export type SavePopulated = {
+  item: post | review
+  kind: 'post' | 'review'
+}[]

@@ -1,7 +1,7 @@
 import { Request,Response,NextFunction } from "express";
 import validator from 'validator'
 import { UserSchema } from "../schema/user";
-import type { user } from "../types";
+import type { post, review, user } from "../types";
 import bcrypt from 'bcrypt'
 import { v2 as cloudinary } from 'cloudinary'
 import * as brevo from "@getbrevo/brevo";
@@ -9,7 +9,7 @@ import Crypto from 'crypto'
 import { PostSchema } from "../schema/post";
 import { ReviewSchema } from "../schema/review";
 import { ObjectId, Types } from "mongoose";
-
+import type {SavePopulated} from '../types'
 export const createuser=async(req:Request,res:Response,next:NextFunction)=>{
     try{
     const body:user=req.body
@@ -253,19 +253,7 @@ const likes= (await finduser.populate('likes.item')).likes
 
 
 
-export const getlikes=async (req:Request,res:Response)=>{
-    
 
-const userid=req.query.id
-
-const finduser=await UserSchema.findOne({_id:userid})
-if(!finduser){
-     return res.status(403).json('user not found')
-}
-const likes= (await finduser.populate('likes.item')).likes
-        return res.status(200).json({likes})
-
-}
 
 
 
@@ -421,5 +409,36 @@ await ReviewSchema.updateOne(
 }
 
 
+
+}
+
+export const getlikes=async (req:Request,res:Response)=>{
+    
+const userid=req.query.id
+
+const finduser=await UserSchema.findOne({_id:userid})
+if(!finduser){
+     return res.status(403).json('user not found')
+}
+const likes= (await finduser.populate('likes.item')).likes
+    likes.reverse()
+        return res.status(200).json({likes})
+
+}
+
+
+export const getsaves=async (req:Request,res:Response)=>{
+    
+const userid=req.query.id
+
+const finduser=await UserSchema.findOne({_id:userid})
+if(!finduser){
+     return res.status(403).json('user not found')
+}
+
+const saves= (await finduser.populate<{saves:SavePopulated}>('saves.item')).saves
+       
+        saves.reverse()
+        return res.status(200).json({saves})
 
 }
