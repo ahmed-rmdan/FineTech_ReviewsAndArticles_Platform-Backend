@@ -442,3 +442,63 @@ const saves= (await finduser.populate<{saves:SavePopulated}>('saves.item')).save
         return res.status(200).json({saves})
 
 }
+
+
+
+export const addscore=async (req:Request,res:Response)=>{
+    
+const userid :string=req.body.id
+const reviewid:string=req.body.reviewid
+const score:number=req.body.score
+
+const finduser=await UserSchema.findOne({_id:userid})
+if(!finduser){
+     return res.status(403).json('user not found')
+}
+try{
+  const finreview=await ReviewSchema.findOne({_id:reviewid})
+    const users=finreview?.usersscore.map(elm=>{
+      return elm.id.toString()
+    })
+    console.log(users)
+    console.log(new Types.ObjectId(userid))
+    if(users?.includes(userid)){
+      return res.status(404).json({message:'user already choose a score'})
+    }
+await ReviewSchema.updateOne({_id:reviewid},{$push:{usersscore:{score:score,id:finduser._id}}})
+return res.status(200).json({message:'score has been added'})
+}catch{
+return res.status(402).json({message:'somthing wrong happend'})
+}
+
+        
+}
+
+
+export const getuserscores=async (req:Request,res:Response)=>{
+    
+
+const reviewid=req.query.id as string
+
+
+const findreview=await ReviewSchema.findOne({_id:reviewid})
+if(!findreview){
+     return res.status(402).json({message:'review not found'})
+}
+
+const usersno=findreview.usersscore.length
+let totalscore=0
+findreview.usersscore.forEach(elm=>{
+   if(!elm.score){
+    return
+   }
+  totalscore=totalscore+elm!.score as number
+})
+const avgscore=totalscore/usersno
+
+
+return res.status(200).json({avgscore,usersno})
+
+
+        
+}

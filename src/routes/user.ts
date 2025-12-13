@@ -7,6 +7,8 @@ import { addlike } from "../controler/users";
 import { setlikesandsaves } from "../controler/users";
 import { addsave } from "../controler/users";
 import { getsaves } from "../controler/users";
+import { addscore } from "../controler/users";
+import { getuserscores } from "../controler/users";
 import express from 'express'
 
 const router=express.Router()
@@ -21,5 +23,7 @@ router.get('/setlikesandsaves',setlikesandsaves)
 router.post('/addsave',addsave)
 router.get('/getlikes',getlikes)
 router.get('/getsaves',getsaves)
+router.put('/addscore',addscore)
+router.get('/getscores',getuserscores)
 
 export const UserRoutes=router
