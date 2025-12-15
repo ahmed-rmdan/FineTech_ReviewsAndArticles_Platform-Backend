@@ -3,7 +3,7 @@ import { PostSchema } from "../schema/post";
 import validator from 'validator'
 import type { post } from "../types";
 import { v2 as cloudinary } from 'cloudinary'
-import { upload } from "..";
+
 
 export const createpost=async(req:Request,res:Response,next:NextFunction)=>{
     if(!req.body){

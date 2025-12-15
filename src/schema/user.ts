@@ -14,7 +14,7 @@ const user=new Schema({
     likes: [
             {
     item: { type: Schema.Types.ObjectId, refPath: "likes.kind" },
-    kind: { type: String, enum: ["post", "review"] }
+    kind: { type: String, enum: ["post", "review","comment","subcomment"] }
              }
     ],
    saves: [
