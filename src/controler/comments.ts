@@ -4,6 +4,7 @@ import { UserSchema } from "../schema/user";
 import validator from 'validator'
 import { SubcommentSchema } from "../schema/subcomment";
 import { Types } from "mongoose";
+
 export const getcomments=async(req:Request,res:Response,next:NextFunction)=>{
 
     const itemid=req.query.id
@@ -153,4 +154,54 @@ export const getcomments=async(req:Request,res:Response,next:NextFunction)=>{
       return res.status(406).json({message:'invalid body'})
     }
     
+    }
+
+    
+    export const getadmincomments=async(req:Request,res:Response,next:NextFunction)=>{
+    
+        const page=Number(req.query.page)
+        const sort=req.query.sort as string
+          console.log(sort)
+               const start=(page-1)*6
+            try{
+              const maincomments=await CommentSchema.find().sort({createdAt:-1})
+                 const subcomments=await SubcommentSchema.find().sort({createdAt:-1})
+                  const nomaincomments=maincomments.length
+                  const nosubcomments=subcomments.length
+                  const nocomments=nosubcomments+nomaincomments
+                   
+                  const allcomments=[...maincomments,...subcomments]
+                  const comments=allcomments.splice(start,6)
+
+
+
+                return res.status(200).json({comments,nocomments})                                    
+          
+              }        
+            catch(err){
+                 return res.status(406).json({message:'somthing went wrong'})
+            }
+                                        
+              
+    }
+
+
+    export const deletecomment=async(req:Request,res:Response,next:NextFunction)=>{
+
+    const id=req.body.id
+
+     if(!id){
+        return res.status(402).json({message:'body is missing'})
+     }
+      try{
+        await CommentSchema.updateOne({_id:id},{$set:{content:'This Has Been Deleted !'}})
+         await SubcommentSchema.updateOne({_id:id},{$set:{content:'This Has Been Deleted !'}})
+      }catch(err){
+         return res.status(402).json({message:'somthing bad happend'})
+      }
+     
+     
+     return res.status(200).json({message:'comment has been deleted'})  
+                                                 
+          
     }

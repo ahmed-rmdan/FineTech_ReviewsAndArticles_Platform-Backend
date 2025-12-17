@@ -8,6 +8,8 @@ const user=new Schema({
     email:{type:String,required:true},
     image:{type:String||null,default:null}
     ,
+    role:{type:String,deafult:'user'}
+    ,
    imageid:{type:String||null,default:null} ,
     resettoken:{type:String||null,default:null},
     resetexpire:{type:String||null,default:null},
@@ -28,7 +30,8 @@ const user=new Schema({
     ],
     likedcomments:[
         {type:Schema.Types.ObjectId,ref:'comment'}
-    ]
+    ],
+    banned:{type:Boolean,default:false}
 
 },{timestamps:true})
 

@@ -255,11 +255,9 @@ const likes= (await finduser.populate('likes.item')).likes
 
 
 
-
-
 export const addlike=async (req:Request,res:Response)=>{
     
- console.log('sadsadsad')
+
   const userid=req.body.id as string
    const itemid=req.body.itemid as string
    const kind=req.body.kind as string
@@ -276,7 +274,7 @@ if (post?.likes.includes( new Types.ObjectId(userid) ) ) {
           const userlikepost=oldlikes.findIndex(elm=>{
            return elm.item?.equals(itemid)
           })
-          console.log(userlikepost)
+          
            oldlikes.splice(userlikepost,1)
          await UserSchema.updateOne({_id:userid},{$set:{likes:oldlikes}})
            const oldusers=post.likes
@@ -496,9 +494,44 @@ findreview.usersscore.forEach(elm=>{
 })
 const avgscore=totalscore/usersno
 
-
 return res.status(200).json({avgscore,usersno})
-
-
         
 }
+
+    
+    export const getadminusers=async(req:Request,res:Response,next:NextFunction)=>{
+    
+        const page=Number(req.query.page)
+        const sort=req.query.sort as string
+          console.log(sort)
+               const start=(page-1)*6
+            try{
+              let users=await UserSchema.find().sort({createdAt:-1}).skip(start).limit(6)
+                const nousers=users.length                 
+                return res.status(200).json({users,nousers})                                    
+          
+              }        
+            catch(err){
+                 return res.status(406).json({message:'somthing went wrong'})
+            }
+                                        
+              
+    }
+
+    
+        export const banuser=async(req:Request,res:Response,next:NextFunction)=>{
+    
+        const id=req.body.id as string
+       
+            try{
+              const finduser=await UserSchema.findOne({_id:id})
+                  await UserSchema.updateOne({_id:id},{banned:!finduser?.banned})               
+                return res.status(200).json({message:'user has been updated'})                                    
+          
+              }        
+            catch(err){
+                 return res.status(406).json({message:'somthing went wrong'})
+            }
+                                        
+              
+    }
