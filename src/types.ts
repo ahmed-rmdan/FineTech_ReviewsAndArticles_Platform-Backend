@@ -27,7 +27,9 @@ export type user={
     name:string,
     username:string,
     password:string,
-    email:string
+    email:string,
+    image:string,
+    _id:string
 }
 export type SavePopulated = {
   item: post | review

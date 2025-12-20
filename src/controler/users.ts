@@ -10,6 +10,7 @@ import { PostSchema } from "../schema/post";
 import { ReviewSchema } from "../schema/review";
 import { ObjectId, Types } from "mongoose";
 import type {SavePopulated} from '../types'
+import JWT from 'jsonwebtoken'
 export const createuser=async(req:Request,res:Response,next:NextFunction)=>{
     try{
     const body:user=req.body
@@ -535,3 +536,59 @@ return res.status(200).json({avgscore,usersno})
                                         
               
     }
+
+
+        
+        export const signin=async(req:Request,res:Response,next:NextFunction)=>{
+    
+        const username=req.body.username as string
+       const password=req.body.password as string
+            try{
+              const finduser=await UserSchema.findOne({username:username})
+                         if(!finduser){
+                          return res.status(404).json({message:'cant find user'})
+                         } 
+          const isequal = await bcrypt.compare(
+                               password,         
+                               finduser.password as string             
+                                   );
+
+                 if (!isequal) {
+                 return res.status(404).json({message:" password or username are not right"});
+                        } 
+                  const token=JWT.sign( {role:finduser.role,_id:finduser._id,email:finduser.email} ,'very very secret')                                  
+                      return res.status(200).json({role:finduser.role,_id:finduser._id,email:finduser.email,image:finduser.image,token,name:finduser.name})
+              }        
+            catch(err){
+                 return res.status(406).json({message:'somthing went wrong'})
+            }
+                                        
+              
+    }
+
+
+    export const creategoogleuser=async(req:Request,res:Response,next:NextFunction)=>{
+    try{
+    const body:user=req.body
+    if(!body){
+        return res.status(404).json({message:'body is missing'})
+    }
+   await new UserSchema({
+    name:body.name,
+    username:body.username,
+    email:body.email,
+    image:body.image,
+    _id:new Types.ObjectId(body._id)
+
+   }).save()
+
+   return res.status(200).json({message:'user has been created'})
+
+
+    }catch(err){
+        return res.status(402).json({message:'somthing went wrong'})
+    }
+
+}
+
+

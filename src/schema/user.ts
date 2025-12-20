@@ -4,8 +4,8 @@ import { Schema } from 'mongoose'
 const user=new Schema({
     name:{type:String,required:true},
     username:{type:String,required:true},
-    password:{type:String,required:true},
-    email:{type:String,required:true},
+    password:{type:String,required:false},
+    email:{type:String,required:true,unique:true},
     image:{type:String||null,default:null}
     ,
     role:{type:String,deafult:'user'}
@@ -31,7 +31,8 @@ const user=new Schema({
     likedcomments:[
         {type:Schema.Types.ObjectId,ref:'comment'}
     ],
-    banned:{type:Boolean,default:false}
+    banned:{type:Boolean,default:false},
+    provider:{type:String,deafult:'credentials'}
 
 },{timestamps:true})
 

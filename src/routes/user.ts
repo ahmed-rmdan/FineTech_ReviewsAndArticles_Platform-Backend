@@ -11,6 +11,9 @@ import { addscore } from "../controler/users";
 import { getuserscores } from "../controler/users";
 import { getadminusers } from "../controler/users";
 import { banuser } from "../controler/users";
+import { signin } from "../controler/users";
+import { isadmin } from "../middleware/middleware";
+import { creategoogleuser } from "../controler/users";
 import express from 'express'
 
 const router=express.Router()
@@ -28,5 +31,7 @@ router.get('/getsaves',getsaves)
 router.put('/addscore',addscore)
 router.get('/getscores',getuserscores)
 router.get('/getadminusers',getadminusers)
-router.put('/banuser',banuser)
+router.put('/banuser',isadmin,banuser)
+router.post('/signin',signin)
+router.post('/creategoogleuser',creategoogleuser)
 export const UserRoutes=router

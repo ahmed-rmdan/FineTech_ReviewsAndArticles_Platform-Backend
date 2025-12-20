@@ -8,13 +8,14 @@ import { editpost } from "../controler/posts"
 import { getsliderposts } from "../controler/posts"
 import  {gettopreadingposts} from "../controler/posts"
 import { viewpost } from "../controler/posts"
+import { isadmin } from "../middleware/middleware"
 
 const router=express.Router()
 
-router.post('/createpost',createpost)
+router.post('/createpost',isadmin,createpost)
 router.get('/getposts',getposts)
 router.get('/searchadminposts',searchpostsadmin)
-router.delete('/deletepost',deletepost)
+router.delete('/deletepost',isadmin,deletepost)
 router.get('/getpost',getpost)
 router.post('/editpost',editpost)
 router.get('/getsliderposts',getsliderposts)
