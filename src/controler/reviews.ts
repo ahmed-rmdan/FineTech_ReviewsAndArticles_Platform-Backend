@@ -13,8 +13,8 @@ export const createreview=async(req:Request,res:Response,next:NextFunction)=>{
     }
     const body:review=req.body
   console.log(body.category)
-  if(!validator.isLength(body.title,{max:25})){
-    return res.status(404).json({message:'title max length is 25'})
+  if(!validator.isLength(body.title,{max:30})){
+    return res.status(404).json({message:'title max length is 30'})
    }  
 
    if(!body.score){

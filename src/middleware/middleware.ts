@@ -1,5 +1,5 @@
 import JWT from 'jsonwebtoken'
-
+import {connectToRedis} from '../redis'
 import { Request, Response,NextFunction } from "express"
 
         export const isadmin=async(req:Request,res:Response,next:NextFunction)=>{
@@ -16,6 +16,32 @@ import { Request, Response,NextFunction } from "express"
                 return res.status(404).json({message:'you are not the admin'})
             }
             next()
+                                         
+              
+    }
+
+            export const ratelimting=async(req:Request,res:Response,next:NextFunction)=>{
+    
+       const xff = req.headers['x-forwarded-for'] 
+
+ const ip = (typeof xff === 'string'
+    ? xff.split(',')[0]?.trim()
+    : Array.isArray(xff)
+    ? xff[0]
+    : undefined) ||
+  req.socket.remoteAddress;
+  const redis=await connectToRedis()
+  const rate=await redis?.incr(ip as string)
+  
+   if(rate===1){
+   await redis?.expire(ip as string,120)
+   }
+   if(rate as number>5){
+    return res.status(404).json({message:'please try later'})
+   }
+   console.log(rate)
+   
+  next()
                                          
               
     }

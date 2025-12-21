@@ -93,15 +93,19 @@ export const searchpostsadmin=async(req:Request,res:Response,next:NextFunction)=
 
 
 export const deletepost=async(req:Request,res:Response,next:NextFunction)=>{
+     console.log(req.body)
                 if(!req.body){
         return res.status(406).json({message:'body missed'})
                           }
            const id=req.body.id as string
           try{
-            const curpost=await PostSchema.findOne({id})
+            const curpost=await PostSchema.findOne({_id:id})
+             if(curpost?.imageid){
+             await cloudinary.uploader.destroy(curpost?.imageid as string)
+             }
              
             await PostSchema.deleteOne({_id:id})
-            await cloudinary.uploader.destroy(curpost?.imageid as string)
+            
              return res.status(200).json({message:'post has been deleted successfully'})
           }catch(err){
            return res.status(406).json({message:'somthing went wrong'})

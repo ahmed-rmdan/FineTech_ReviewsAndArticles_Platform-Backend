@@ -430,6 +430,7 @@ export const getsaves=async (req:Request,res:Response)=>{
     
 const userid=req.query.id
 
+
 const finduser=await UserSchema.findOne({_id:userid})
 if(!finduser){
      return res.status(403).json('user not found')
@@ -556,7 +557,8 @@ return res.status(200).json({avgscore,usersno})
                  if (!isequal) {
                  return res.status(404).json({message:" password or username are not right"});
                         } 
-                  const token=JWT.sign( {role:finduser.role,_id:finduser._id,email:finduser.email} ,'very very secret')                                  
+                  const token= JWT.sign( {role:finduser.role,_id:finduser._id,email:finduser.email} ,'very very secret') 
+                  console.log(token)                                 
                       return res.status(200).json({role:finduser.role,_id:finduser._id,email:finduser.email,image:finduser.image,token,name:finduser.name})
               }        
             catch(err){
