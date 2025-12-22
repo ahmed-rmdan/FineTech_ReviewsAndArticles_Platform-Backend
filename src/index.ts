@@ -14,6 +14,7 @@ import { editreviewimage } from './controler/reviews';
 import { UserRoutes } from './routes/user';
 import { putuserimage } from './controler/users';
 import { CommentsRouter } from './routes/comments';
+import { getreport } from './controler/report';
 dotenv.config()
 cloudinary.config({
   cloud_name:'df0no7xar',
@@ -53,6 +54,7 @@ app.put('/users/putuserimage',upload.single('file'),putuserimage)
 
 app.use('/comments',CommentsRouter)
 
+app.get('/getreport',getreport)
 
 mongoose.connect(process.env.MONGO_URI as string).then(server=>{
 app.listen(process.env.PORT || '5000')
