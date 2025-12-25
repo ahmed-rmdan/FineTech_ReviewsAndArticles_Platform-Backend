@@ -3,10 +3,7 @@ import { createClient } from 'redis';
 export async function connectToRedis() {
   try {
     const client = createClient({
-      socket: {
-        host: process.env.REDIS_HOST || 'localhost',
-        port: 6379
-      }
+       url: process.env.REDIS_URL as string,
     });
     client.on('error', (err) => console.log('Redis Client Error', err));
     await client.connect(); 

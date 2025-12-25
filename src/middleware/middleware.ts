@@ -30,6 +30,7 @@ import { Request, Response,NextFunction } from "express"
     ? xff[0]
     : undefined) ||
   req.socket.remoteAddress;
+  try{
   const redis=await connectToRedis()
   const rate=await redis?.incr(ip as string)
   
@@ -42,6 +43,12 @@ import { Request, Response,NextFunction } from "express"
    console.log('the rate',rate)
    
   next()
+
+  }catch(err){
+    console.log(err)
+    res.status(406).json({message:'somthing went wrong'})
+  }
+
                                          
               
     }
