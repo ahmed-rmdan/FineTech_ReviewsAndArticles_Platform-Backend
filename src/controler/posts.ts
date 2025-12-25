@@ -54,6 +54,7 @@ export const getposts=async(req:Request,res:Response,next:NextFunction)=>{
               }        
           
         }catch(err){
+          console.log(err)
              return res.status(406).json({message:'somthing went wrong'})
         }
                                     
