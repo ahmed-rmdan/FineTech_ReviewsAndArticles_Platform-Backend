@@ -39,7 +39,7 @@ import { Request, Response,NextFunction } from "express"
    if(rate as number>5){
     return res.status(404).json({message:'please try later'})
    }
-   console.log(rate)
+   console.log('the rate',rate)
    
   next()
                                          

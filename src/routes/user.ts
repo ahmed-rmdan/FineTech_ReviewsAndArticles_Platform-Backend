@@ -342,7 +342,7 @@ router.put('/banuser',isadmin,banuser)
  *       401:
  *         description: Invalid credentials
  */
-router.post('/signin',signin)
+router.post('/signin',ratelimting,signin)
 
 /**
  * @swagger
