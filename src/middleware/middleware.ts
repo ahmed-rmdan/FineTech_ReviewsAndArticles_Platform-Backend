@@ -46,7 +46,7 @@ import { Request, Response,NextFunction } from "express"
 
   }catch(err){
     console.log(err)
-    res.status(406).json({message:'somthing went wrong'})
+   return res.status(406).json({message:'rate limiting went wrong'})
   }
 
                                          
